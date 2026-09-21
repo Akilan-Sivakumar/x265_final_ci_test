@@ -67,7 +67,7 @@ bool Y4MOutput::writePicture(const x265_picture& pic)
 {
     std::ofstream::pos_type outPicPos = header;
     if (pic.bitDepth > 8)
-        outPicPos += (uint64_t)(pic.poc * (6 + frameSize * 2));
+        outPicPos += (uint64_t)pic.poc * (6 + frameSize * 2);
     else
         outPicPos += (uint64_t)pic.poc * (6 + frameSize);
     ofs.seekp(outPicPos);
