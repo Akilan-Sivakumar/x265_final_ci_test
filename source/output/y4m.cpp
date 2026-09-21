@@ -28,13 +28,12 @@
 using namespace X265_NS;
 using namespace std;
 
-Y4MOutput::Y4MOutput(const char* filename, int w, int h, uint32_t bitdepth, uint32_t fpsNum, uint32_t fpsDenom, int csp, int inputdepth)
+Y4MOutput::Y4MOutput(const char* filename, int w, int h, uint32_t bitdepth, uint32_t fpsNum, uint32_t fpsDenom, int csp)
     : width(w)
     , height(h)
     , bitDepth(bitdepth)
     , colorSpace(csp)
     , frameSize(0)
-    , inputDepth(inputdepth)
 {
     ofs.open(filename, ios::binary | ios::out);
     buf = new char[width];

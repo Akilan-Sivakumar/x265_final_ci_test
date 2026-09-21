@@ -28,13 +28,12 @@
 using namespace X265_NS;
 using namespace std;
 
-YUVOutput::YUVOutput(const char *filename, int w, int h, uint32_t d, int csp, int inputdepth)
+YUVOutput::YUVOutput(const char *filename, int w, int h, uint32_t d, int csp)
     : width(w)
     , height(h)
     , depth(d)
     , colorSpace(csp)
     , frameSize(0)
-    , inputDepth(inputdepth)
 {
     ofs.open(filename, ios::binary | ios::out);
     buf = new char[width];
