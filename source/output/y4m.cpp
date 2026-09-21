@@ -53,7 +53,7 @@ Y4MOutput::Y4MOutput(const char* filename, int w, int h, uint32_t bitdepth, uint
     }
 
     for (int i = 0; i < x265_cli_csps[colorSpace].planes; i++)
-        frameSize += (uint32_t)((width >> x265_cli_csps[colorSpace].width[i]) * (height >> x265_cli_csps[colorSpace].height[i]));
+        frameSize += static_cast<uint32_t>(width >> x265_cli_csps[colorSpace].width[i]) * (height >> x265_cli_csps[colorSpace].height[i]);
 }
 
 Y4MOutput::~Y4MOutput()
@@ -66,9 +66,9 @@ bool Y4MOutput::writePicture(const x265_picture& pic)
 {
     std::ofstream::pos_type outPicPos = header;
     if (bitDepth > 8)
-        outPicPos += (uint64_t)pic.poc * (6 + frameSize * 2);
+        outPicPos += static_cast<uint64_t>(pic.poc) * (6 + frameSize * 2);
     else
-        outPicPos += (uint64_t)pic.poc * (6 + frameSize);
+        outPicPos += static_cast<uint64_t>(pic.poc) * (6 + frameSize);
     ofs.seekp(outPicPos);
     ofs << "FRAME\n";
 
@@ -87,11 +87,11 @@ bool Y4MOutput::writePicture(const x265_picture& pic)
             int shift = pic.bitDepth - 8;
             for (int i = 0; i < x265_cli_csps[colorSpace].planes; i++)
             {
-                uint16_t *src = (uint16_t*)pic.planes[i];
+                uint16_t *src = reinterpret_cast<uint16_t*>(pic.planes[i]);
                 for (int h = 0; h < height >> x265_cli_csps[colorSpace].height[i]; h++)
                 {
                     for (int w = 0; w < width >> x265_cli_csps[colorSpace].width[i]; w++)
-                        buf[w] = (char)(src[w] >> shift);
+                        buf[w] = static_cast<char>(src[w] >> shift);
 
                     ofs.write(buf, width >> x265_cli_csps[colorSpace].width[i]);
                     src += pic.stride[i] / sizeof(*src);
@@ -100,13 +100,13 @@ bool Y4MOutput::writePicture(const x265_picture& pic)
         }
         else
         {
-            X265_CHECK(bitDepth == pic.bitDepth, "invalid bit depth\n");
+            X265_CHECK(static_cast<int>(bitDepth) == pic.bitDepth, "invalid bit depth\n");
             for (int i = 0; i < x265_cli_csps[colorSpace].planes; i++)
             {
-                uint16_t *src = (uint16_t*)pic.planes[i];
+                uint16_t *src = reinterpret_cast<uint16_t*>(pic.planes[i]);
                 for (int h = 0; h < (height * 1) >> x265_cli_csps[colorSpace].height[i]; h++)
                 {
-                    ofs.write((const char*)src, (width * 2) >> x265_cli_csps[colorSpace].width[i]);
+                    ofs.write(reinterpret_cast<const char*>(src), (width * 2) >> x265_cli_csps[colorSpace].width[i]);
                     src += pic.stride[i] / sizeof(*src);
                 }
             }
@@ -117,7 +117,7 @@ bool Y4MOutput::writePicture(const x265_picture& pic)
         X265_CHECK(bitDepth == 8, "invalid bit depth\n");
         for (int i = 0; i < x265_cli_csps[colorSpace].planes; i++)
         {
-            char *src = (char*)pic.planes[i];
+            char *src = reinterpret_cast<char*>(pic.planes[i]);
             for (int h = 0; h < height >> x265_cli_csps[colorSpace].height[i]; h++)
             {
                 ofs.write(src, width >> x265_cli_csps[colorSpace].width[i]);
