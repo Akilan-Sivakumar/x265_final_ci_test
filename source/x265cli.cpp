@@ -1058,7 +1058,7 @@ namespace X265_NS {
             for (int i = 0; i < param->numLayers; i++)
             {
                 this->recon[i] = ReconFile::open(reconfn[i], param->sourceWidth, param->sourceHeight, reconFileBitDepth,
-                    param->fpsNum, param->fpsDenom, param->internalCsp, param->sourceBitDepth);
+                    param->fpsNum, param->fpsDenom, param->internalCsp);
                 if (this->recon[i]->isFail())
                 {
                     x265_log(param, X265_LOG_WARNING, "unable to write reconstructed outputs file\n");
